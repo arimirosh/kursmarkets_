@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Результат</h1>
+  <p class="hint">
+    FIGI / instrument_id: <b>{{ instrument_id }}</b> ·
+    дней: <b>{{ days_back }}</b> ·
+    интервал: <b>{{ interval }}</b> ·
+    свечей: <b>{{ n }}</b> ·
+    SDK: <b>{{ sdk }}</b>
+  </p>
+
+  <div class="card">
+    <img src="{{ chart_uri }}" alt="candles chart">
+  </div>
+
+  <div class="card">
+    <h3>Последние строки таблицы</h3>
+    {{ table_html | safe }}
+  </div>
+
+  <p><a href="/">← Назад</a></p>
+{% endblock %}

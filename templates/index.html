@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Свечи по FIGI / instrument_id</h1>
+  <p class="hint">SDK: <b>{{ sdk }}</b></p>
+
+  <form method="post" action="/run" class="card">
+    <label>FIGI / instrument_id</label>
+    <input name="instrument_id" value="{{ default_instrument_id }}" required>
+
+    <label>Дней назад</label>
+    <input name="days_back" type="number" min="1" max="365" value="{{ default_days }}" required>
+
+    <label>Интервал</label>
+    <select name="interval">
+      {% for v in ["1m","5m","15m","1h","4h","1d"] %}
+        <option value="{{v}}" {% if v==default_interval %}selected{% endif %}>{{v}}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Получить свечи</button>
+  </form>
+
+  <div class="card">
+    <h3>Установка SDK (Python 3.12)</h3>
+    <pre>$ pip install t-tech-investments --index-url https://opensource.tbank.ru/api/v4/projects/238/packages/pypi/simple</pre>
+    <p class="hint">Источник: документация T‑Bank Dev Portal.</p>
+  </div>
+{% endblock %}

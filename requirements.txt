@@ -1,0 +1,4 @@
+Flask==3.0.3
+pandas==2.2.2
+matplotlib==3.9.2
+mplfinance==0.12.10b0
