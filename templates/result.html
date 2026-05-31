@@ -1,22 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Результат</h1>
-  <p class="hint">
-    FIGI / instrument_id: <b>{{ instrument_id }}</b> ·
-    дней: <b>{{ days_back }}</b> ·
-    интервал: <b>{{ interval }}</b> ·
-    свечей: <b>{{ n }}</b> ·
-    SDK: <b>{{ sdk }}</b>
-  </p>
+  <section class="result-header">
+    <div>
+      <p class="eyebrow">Analysis result</p>
+      <h1 class="result-title">{{ instrument_id }} market dashboard</h1>
+      <p class="lead">
+        {{ days_back }} days · {{ interval }} candles · {{ n }} observations · {{ sdk }}
+      </p>
+    </div>
+    <a class="back-link" href="/">Back to scanner</a>
+  </section>
 
-  <div class="card">
-    <img src="{{ chart_uri }}" alt="candles chart">
-  </div>
+  <section class="metrics-grid">
+    <div class="metric-card">
+      <p class="metric-label">Last close</p>
+      <p class="metric-value">{{ summary.last_close }}</p>
+      <p class="metric-note">Change: {{ summary.change_abs }}</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Period return</p>
+      <p class="metric-value {{ summary.period_return_class }}">{{ summary.period_return }}</p>
+      <p class="metric-note">From first to last close in the selected window.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Price range</p>
+      <p class="metric-value">{{ summary.range_pct }}</p>
+      <p class="metric-note">High {{ summary.high }} · Low {{ summary.low }}</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Average volume</p>
+      <p class="metric-value">{{ summary.avg_volume }}</p>
+      <p class="metric-note">Mean trading volume per candle.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Volatility</p>
+      <p class="metric-value">{{ summary.volatility }}</p>
+      <p class="metric-note">Standard deviation of candle returns.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Momentum signal</p>
+      <p class="metric-value {{ summary.signal_class }}">{{ summary.signal }}</p>
+      <p class="metric-note">Based on 5-period and 10-period moving averages.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Short MA</p>
+      <p class="metric-value">{{ summary.short_ma }}</p>
+      <p class="metric-note">Fast moving average for recent direction.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Long MA</p>
+      <p class="metric-value">{{ summary.long_ma }}</p>
+      <p class="metric-note">Baseline moving average for trend comparison.</p>
+    </div>
+  </section>
 
-  <div class="card">
-    <h3>Последние строки таблицы</h3>
+  <section class="section card chart-card">
+    <h2 class="section-title">Candlestick chart</h2>
+    <img src="{{ chart_uri }}" alt="Candlestick chart for {{ instrument_id }}">
+  </section>
+
+  <section class="section card table-card">
+    <h2 class="section-title">Recent OHLCV data</h2>
     {{ table_html | safe }}
-  </div>
-
-  <p><a href="/">← Назад</a></p>
+  </section>
 {% endblock %}

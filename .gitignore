@@ -1,4 +1,6 @@
 .venv/
+.venv312/
 __pycache__/
 *.pyc
+.idea/
 app_secrets.py

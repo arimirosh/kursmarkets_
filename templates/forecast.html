@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">CSPO-inspired forecasting</p>
+      <h1>Cross-market prediction for the next stock move.</h1>
+      <p class="lead">
+        This page estimates the next close price by combining the target stock with related market assets, then adjusts confidence using pseudo-volatility.
+      </p>
+    </div>
+
+    <form method="post" action="/forecast/run" class="card form-card">
+      <h2 class="section-title">Forecast setup</h2>
+      <div class="forecast-grid">
+        <div>
+          <label for="target_ticker">Target stock</label>
+          <input id="target_ticker" name="target_ticker" value="{{ default_target }}" placeholder="SBER" required>
+        </div>
+        <div>
+          <label for="related_tickers">Cross-market tickers</label>
+          <textarea id="related_tickers" name="related_tickers" required>{{ default_related }}</textarea>
+        </div>
+      </div>
+
+      <div class="forecast-options">
+        <div>
+          <label for="days_back">Training window</label>
+          <input id="days_back" name="days_back" type="number" min="40" max="365" value="{{ default_days }}" required>
+        </div>
+        <div>
+          <label for="interval">Interval</label>
+          <select id="interval" name="interval">
+            {% for v in ["1d","1h","10m"] %}
+              <option value="{{v}}" {% if v==default_interval %}selected{% endif %}>{{v}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="chips" aria-label="Preset cross-market groups">
+        <button class="chip" type="button" data-preset="GAZP,LKOH,ROSN,VTBR,YDEX,AFLT">Large caps</button>
+        <button class="chip" type="button" data-preset="SBER,VTBR,MOEX">Financials</button>
+        <button class="chip" type="button" data-preset="GAZP,LKOH,ROSN,NVTK,TATN">Energy</button>
+      </div>
+
+      <button class="primary-button" type="submit">Run CSPO forecast</button>
+    </form>
+  </section>
+
+  <section class="section method-grid">
+    <div class="method-card">
+      <p class="method-label">Step 1</p>
+      <p class="method-value">Market encoding</p>
+      <p class="metric-note">The app loads aligned close-price series for the target and related MOEX assets.</p>
+    </div>
+    <div class="method-card">
+      <p class="method-label">Step 2</p>
+      <p class="method-value">Cross-market synergy</p>
+      <p class="metric-note">Returns from related assets become external signals for the target stock.</p>
+    </div>
+    <div class="method-card">
+      <p class="method-label">Step 3</p>
+      <p class="method-value">Movement regression</p>
+      <p class="metric-note">A ridge model predicts the next target return from the latest market state.</p>
+    </div>
+    <div class="method-card">
+      <p class="method-label">Step 4</p>
+      <p class="method-value">Pseudo-volatility</p>
+      <p class="metric-note">Recent volatility and model noise are converted into a forecast confidence score.</p>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll("[data-preset]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelector("#related_tickers").value = button.dataset.preset;
+      });
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="result-header">
+    <div>
+      <p class="eyebrow">CSPO forecast result</p>
+      <h1 class="result-title">{{ forecast.target }} next-close forecast</h1>
+      <p class="lead">
+        {{ days_back }} days · {{ interval }} candles · {{ forecast.observations }} aligned observations · {{ forecast.features }} model features
+      </p>
+    </div>
+    <a class="back-link" href="/forecast">Back to forecast</a>
+  </section>
+
+  <section class="metrics-grid">
+    <div class="metric-card">
+      <p class="metric-label">Last close</p>
+      <p class="metric-value">{{ forecast.last_close }}</p>
+      <p class="metric-note">Latest observed close price.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Predicted close</p>
+      <p class="metric-value">{{ forecast.predicted_close }}</p>
+      <p class="metric-note">Expected next-step close from the cross-market model.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Expected return</p>
+      <p class="metric-value {{ forecast.direction_class }}">{{ forecast.predicted_return }}</p>
+      <p class="metric-note">Price delta: {{ forecast.price_delta }}</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Direction</p>
+      <p class="metric-value {{ forecast.direction_class }}">{{ forecast.direction }}</p>
+      <p class="metric-note">Movement sign predicted for the next candle.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Pseudo-volatility</p>
+      <p class="metric-value">{{ forecast.pseudo_volatility }}</p>
+      <p class="metric-note">Recent target volatility plus model residual noise.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Confidence</p>
+      <p class="metric-value">{{ forecast.confidence }}</p>
+      <p class="metric-note">Lower when pseudo-volatility is higher.</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Cross-market set</p>
+      <p class="metric-value">{{ forecast.features }}</p>
+      <p class="metric-note">{{ forecast.related }}</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-label">Model type</p>
+      <p class="metric-value">Ridge</p>
+      <p class="metric-note">A compact proxy for CSPO movement forecasting.</p>
+    </div>
+  </section>
+
+  <section class="section card chart-card">
+    <h2 class="section-title">Forecast path</h2>
+    <img src="{{ forecast.chart_uri }}" alt="Forecast chart for {{ forecast.target }}">
+  </section>
+
+  <section class="section card table-card">
+    <h2 class="section-title">Cross-market feature impact</h2>
+    <p class="metric-note">
+      Impact is the model-weighted contribution of the latest return signal. Correlation compares each feature with the next target return.
+    </p>
+    <div class="contribution-list">
+      <div class="contribution-row">
+        <strong>Ticker</strong>
+        <strong>Latest return</strong>
+        <strong>Correlation</strong>
+        <strong>Impact</strong>
+      </div>
+      {% for row in forecast.contributions %}
+        <div class="contribution-row">
+          <strong>{{ row.ticker }}</strong>
+          <span>{{ row.latest_return }}</span>
+          <span>{{ row.correlation }}</span>
+          <span>{{ row.impact }}</span>
+        </div>
+      {% endfor %}
+    </div>
+    {% if forecast.skipped %}
+      <p class="metric-note warning">Skipped tickers because MOEX did not return data: {{ forecast.skipped }}</p>
+    {% endif %}
+  </section>
+
+  <section class="section method-grid">
+    <div class="method-card">
+      <p class="method-label">CSPO link</p>
+      <p class="method-value">Stock exogeneity</p>
+      <p class="metric-note">External market assets are used as signals for the target stock.</p>
+    </div>
+    <div class="method-card">
+      <p class="method-label">CSPO link</p>
+      <p class="method-value">Volatility heterogeneity</p>
+      <p class="metric-note">Pseudo-volatility reduces confidence when the target is unstable.</p>
+    </div>
+    <div class="method-card">
+      <p class="method-label">Educational scope</p>
+      <p class="method-value">Interpretable proxy</p>
+      <p class="metric-note">The app uses a transparent regression instead of a full transformer.</p>
+    </div>
+    <div class="method-card">
+      <p class="method-label">Output</p>
+      <p class="method-value">Next close</p>
+      <p class="metric-note">The predicted return is converted back into a price forecast.</p>
+    </div>
+  </section>
+{% endblock %}

@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Ошибка</h1>
-  <div class="card">
-    <pre style="white-space: pre-wrap">{{ message }}</pre>
+  <section class="result-header">
+    <div>
+      <p class="eyebrow">Request failed</p>
+      <h1 class="result-title">Unable to load market data.</h1>
+      <p class="lead">The data source returned an error. Check the ticker, interval, or selected date range.</p>
+    </div>
+    <a class="back-link" href="/">Back to scanner</a>
+  </section>
+
+  <div class="card error-box">
+    <pre>{{ message }}</pre>
   </div>
-  <p><a href="/">← Назад</a></p>
 {% endblock %}
